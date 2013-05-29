@@ -19,6 +19,19 @@ if (!CModule::IncludeModule($moduleId))
 $dealerId = COption::GetOptionString($moduleId, 'MAX_API_LOGIN');
 $password = COption::GetOptionString($moduleId, 'MAX_API_PASSWORD');
 
+$arSize1 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_BIG_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_BIG_HEIGHT'),
+);
+$arSize2 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_MED_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_MED_HEIGHT'),
+);
+$arSize3 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_SML_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_SML_HEIGHT'),
+);
+
 /**************************** параметры компонента ****************************/
 if (!empty($arParams['MAX_API_LOGIN'])) {
     $dealerId = $arParams['MAX_API_LOGIN'];
@@ -71,7 +84,7 @@ if ($client->getResponseThemeName() == 'error') {
 if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = iconv('utf-8', SITE_CHARSET, $domXml);
 } else {
-    $data = $domXml->saveXML();
+    $data = $domXml;
 }
 $xml = new CDataXML();
 // Лучше бы через
@@ -197,18 +210,7 @@ $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/upload/maxposter/' . $arR
 $path1 = sprintf('%s/upload/maxposter/%d/%d/big/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arResult['DEALER_ID'], $arResult['ID']);
 $path2 = sprintf('%s/upload/maxposter/%d/%d/small/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arResult['DEALER_ID'], $arResult['ID']);
 $path3 = sprintf('%s/upload/maxposter/%d/%d/medium/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arResult['DEALER_ID'], $arResult['ID']);
-$arSize1 = array(
-    'width'  => '255',
-    'height' => '191',
-);
-$arSize2 = array(
-    'width'  => '77',
-    'height' => '58',
-);
-$arSize3 = array(
-    'width'  => '100',
-    'height' => '75',
-);
+
 CheckDirPath($localPath, true);
 CheckDirPath($path1, true);
 CheckDirPath($path2, true);
@@ -264,6 +266,92 @@ if ($photos) {
             @chmod($path1 . $fileName, 0666);
             @chmod($path2 . $fileName, 0666);
             @chmod($path3 . $fileName, 0666);
+        }
+        fclose($from);fclose($to);
+    }
+}
+
+
+
+// Фото
+$arResult['PHOTOS'] = array();
+$photos = $xml->SelectNodes('/response/vehicle/photos');
+if ($photos) {
+    $webDirPath    = trim(COption::GetOptionString($moduleId, 'MAX_UPLOAD_PATH'), '/');
+    $i = 0;
+    foreach ($photos->children() as $i => $photo) {
+        $photoFileName = $photo->getAttribute('file_name');
+        $basePhotoPath = sprintf(
+            '%s/%s/%d/%d',
+            rtrim($_SERVER["DOCUMENT_ROOT"], '/'),
+            $webDirPath,
+            $arResult['DEALER_ID'],
+            $arResult['ID']
+        );
+
+        $arResult['PHOTOS'][$i]['ORIG']['0'] = sprintf('%s/original/%s', $basePhotoPath, $photoFileName);
+        $arResult['PHOTOS'][$i]['BIG']['0'] = sprintf('%s/big/%s', $basePhotoPath, $photoFileName);
+        $arResult['PHOTOS'][$i]['MED']['0'] = sprintf('%s/medium/%s', $basePhotoPath, $photoFileName);
+        $arResult['PHOTOS'][$i]['SML']['0'] = sprintf('%s/small/%s', $basePhotoPath, $photoFileName);
+
+        $arResult['PHOTOS'][$i]['ORIG']['1'] = sprintf('/%s/%d/%d/original/%s', $webDirPath, $arResult['DEALER_ID'], $arResult['ID'], $photoFileName);
+        $arResult['PHOTOS'][$i]['BIG']['1'] = sprintf('/%s/%d/%d/big/%s', $webDirPath, $arResult['DEALER_ID'], $arResult['ID'], $photoFileName);
+        $arResult['PHOTOS'][$i]['MED']['1'] = sprintf('/%s/%d/%d/medium/%s', $webDirPath, $arResult['DEALER_ID'], $arResult['ID'], $photoFileName);
+        $arResult['PHOTOS'][$i]['SML']['1'] = sprintf('/%s/%d/%d/small/%s', $webDirPath, $arResult['DEALER_ID'], $arResult['ID'], $photoFileName);
+
+        foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+            $tmpArSize = ${'arSize' . ($o + 1)};
+            $arResult['PHOTOS'][$i][$photoSize]['2'] = $tmpArSize['width'];
+            $arResult['PHOTOS'][$i][$photoSize]['3'] = $tmpArSize['height'];
+        }
+
+        $sourcePhotoPath = sprintf(
+            'http://maxposter.ru/photo/%d/%d/orig/%s',
+            $arResult['DEALER_ID'],
+            $arResult['ID'],
+            $photoFileName
+        );
+
+        foreach (array('original', 'big', 'medium', 'small') as $photoSize) {
+            CheckDirPath(sprintf('%s/%s/', $basePhotoPath, $photoSize), true);
+        }
+
+        $i++;
+    }
+}
+
+foreach ($arResult['PHOTOS'] as $c => $photoInfo) {
+    if (!file_exists($photoInfo['ORIG']['0']) or ('Y' == $_GET['clear_cache'])) {
+        foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
+            @unlink($photoInfo[$photoSize]['0']);
+        }
+
+        $from = fopen($sourcePhotoPath, 'rb', false);
+        $to   = fopen($photoInfo['ORIG']['0'], 'wb', false);
+        $bytes = stream_copy_to_stream($from, $to);
+
+        if (
+            (@file_exists($photoInfo['ORIG']['0']) && (10 > @filesize($photoInfo['ORIG']['0'])))
+            or ($bytes != @filesize($photoInfo['ORIG']['0']))
+        ) {
+            unset($arResult['PHOTOS'][$c]);
+            foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
+                @unlink($photoInfo[$photoSize]['0']);
+            }
+        } else {
+            @chmod($photoInfo['ORIG']['0'], 0666);
+            foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+                CFile::ResizeImageFile(
+                    $photoInfo['ORIG']['0'],
+                    $photoInfo[$photoSize]['0'],
+                    ${'arSize' . ($o + 1)},
+                    BX_RESIZE_IMAGE_PROPORTIONAL,
+                    array(),
+                    80,
+                    false
+                );
+                @chmod($photoInfo[$photoSize]['0'], 0666);
+            }
         }
         fclose($from);fclose($to);
     }
