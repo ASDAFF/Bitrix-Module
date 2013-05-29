@@ -27,7 +27,7 @@ class maxBXPhoto
 
 
     /**
-     * Путь к фото
+     * РџСѓС‚СЊ Рє С„РѕС‚Рѕ
      *
      * @param  string  $fileName
      * @param  mixed   $arSize

@@ -54,8 +54,8 @@
             <tr><td><?php echo GetMessage('MAX_YEAR') ?></td><td><?php echo $arResult['YEAR'] ?></td></tr>
             <tr><td><?php echo GetMessage('MAX_BODY_TYPE') ?></td><td><?php echo $arResult['BODY_TYPE'] ?></td></tr>
             <tr><td><?php echo GetMessage('MAX_ENGINE_TYPE') ?></td><td><?php echo $arResult['ENGINE_TYPE'] ?></td></tr>
-            <tr><td><?php echo GetMessage('MAX_ENGINE_VOLUME') ?></td><td><?php echo $arResult['ENGINE_VOLUME'] ?>&nbsp;ÒÏ&#179;<?php echo ($arResult['ENGINE_POWER'] ? sprintf('&nbsp;(%s&nbsp;Î.Ò.)', $arResult['ENGINE_POWER']) : '') ?></td></tr>
-            <tr><td><?php echo GetMessage('MAX_DISTANCE') ?></td><td><?php echo number_format($arResult['DISTANCE'], '0', '.', ' '), ' ', ('km' == $arResult['DISTANCE_UNIT'] ? 'ÍÏ' : 'ÏËÎ¸'); ?></td></tr>
+            <tr><td><?php echo GetMessage('MAX_ENGINE_VOLUME') ?></td><td><?php echo $arResult['ENGINE_VOLUME'] ?>&nbsp;—Å–º&#179;<?php echo ($arResult['ENGINE_POWER'] ? sprintf('&nbsp;(%s&nbsp;–ª.—Å.)', $arResult['ENGINE_POWER']) : '') ?></td></tr>
+            <tr><td><?php echo GetMessage('MAX_DISTANCE') ?></td><td><?php echo number_format($arResult['DISTANCE'], '0', '.', ' '), ' ', ('km' == $arResult['DISTANCE_UNIT'] ? '–∫–º' : '–º–∏–ª—å'); ?></td></tr>
             <tr><td><?php echo GetMessage('MAX_DRIVE_TYPE') ?></td><td><?php echo $arResult['DRIVE_TYPE'] ?></td></tr>
             <tr><td><?php echo GetMessage('MAX_GEARBOX_TYPE') ?></td><td><?php echo $arResult['GEARBOX_TYPE'] ?></td></tr>
             <tr><td><?php echo GetMessage('MAX_WHEEL_PLACE') ?></td><td><?php echo $arResult['WHEEL_PLACE'] ?></td></tr>

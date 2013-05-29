@@ -22,7 +22,7 @@
     <table width="100%">
         <tr>
             <td><label
-                for="<?php echo $arResult['FORM']['[mark_id]']['ID'] ?>">Марка</label></td>
+                for="<?php echo $arResult['FORM']['[mark_id]']['ID'] ?>">РњР°СЂРєР°</label></td>
             <td><select name="FS<?php echo $arResult['FORM']['[mark_id]']['NAME'] ?>" id="<?php
                     echo $arResult['FORM']['[mark_id]']['ID']
                 ?>">
@@ -34,9 +34,9 @@
                         ?>><?php echo $option['VALUE'] ?></option>
                 <?php endforeach ?>
             </select></td>
-            <td>Цена</td>
+            <td>Р¦РµРЅР°</td>
             <td><label
-                    for="FS<?php echo $arResult['FORM']['[price][from]']['ID'] ?>">от</label>
+                    for="FS<?php echo $arResult['FORM']['[price][from]']['ID'] ?>">РѕС‚</label>
                 <input
                     type="text"
                     size="9"
@@ -44,7 +44,7 @@
                     value="<?php echo $arResult['SELECTED']['price']['from'] ?>"
                     id="FS<?php echo $arResult['FORM']['[price][from]']['ID'] ?>" />
                 <label
-                        for="FS<?php echo $arResult['FORM']['[price][to]']['ID'] ?>">до</label>
+                        for="FS<?php echo $arResult['FORM']['[price][to]']['ID'] ?>">РґРѕ</label>
                 <input
                         type="text"
                         size="9"
@@ -55,7 +55,7 @@
         </tr>
         <tr>
             <td><label
-                    for="<?php echo $arResult['FORM']['[model_id]']['ID'] ?>">Модель</label></td>
+                    for="<?php echo $arResult['FORM']['[model_id]']['ID'] ?>">РњРѕРґРµР»СЊ</label></td>
             <td><select name="FS<?php echo $arResult['FORM']['[model_id]']['NAME'] ?>" id="<?php
                     echo $arResult['FORM']['[model_id]']['ID']
             ?>">
@@ -74,9 +74,9 @@
         </tr>
         <tr>
             <td colspan="4">
-                <input type="submit" value="Искать" />
+                <input type="submit" value="РСЃРєР°С‚СЊ" />
                 &nbsp;
-                <input type="reset" value="Сбросить" />
+                <input type="reset" value="РЎР±СЂРѕСЃРёС‚СЊ" />
             </td>
         </tr>
     </table>

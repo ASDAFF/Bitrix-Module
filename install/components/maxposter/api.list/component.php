@@ -5,7 +5,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 /* @var $APPLICATION CMain */
 /* @var $this CBitrixComponent */
 
-// Модуль Макспотера
+// РњРѕРґСѓР»СЊ РњР°РєСЃРїРѕС‚РµСЂР°
 $moduleId = 'maxposter.api';
 if (!CModule::IncludeModule($moduleId))
 {
@@ -13,18 +13,18 @@ if (!CModule::IncludeModule($moduleId))
 	return;
 }
 
-// Параметры модуля
+// РџР°СЂР°РјРµС‚СЂС‹ РјРѕРґСѓР»СЏ
 $dealerId = COption::GetOptionString($moduleId, 'MAX_API_LOGIN');
 $password = COption::GetOptionString($moduleId, 'MAX_API_PASSWORD');
 
-/**************************** параметры компонента ****************************/
+/**************************** РїР°СЂР°РјРµС‚СЂС‹ РєРѕРјРїРѕРЅРµРЅС‚Р° ****************************/
 if (!empty($arParams['MAX_API_LOGIN'])) {
     $dealerId = $arParams['MAX_API_LOGIN'];
 }
 if (!empty($arParams['MAX_API_PASSWORD'])) {
     $password = $arParams['MAX_API_PASSWORD'];
 }
-// TODO: вынести в настройки, сильно потом, не нужно учить Битрикс плохому :)
+// TODO: РІС‹РЅРµСЃС‚Рё РІ РЅР°СЃС‚СЂРѕР№РєРё, СЃРёР»СЊРЅРѕ РїРѕС‚РѕРј, РЅРµ РЅСѓР¶РЅРѕ СѓС‡РёС‚СЊ Р‘РёС‚СЂРёРєСЃ РїР»РѕС…РѕРјСѓ :)
 $arParams['REQUEST_THEME'] = 'vehicles';
 #var_dump($arParams);
 
@@ -39,18 +39,18 @@ foreach ($arUrlDefault as $urlKey => $url) {
     }
 }
 
-/***************************** входящие параметры *****************************/
+/***************************** РІС…РѕРґСЏС‰РёРµ РїР°СЂР°РјРµС‚СЂС‹ *****************************/
 /**
  * TODO:
- * - сортировка по всем возможным полям, брать из клиента
- * - фильтрация (учитывать настройки, напр. только спец.цена)
- * - постраничная навигация
+ * - СЃРѕСЂС‚РёСЂРѕРІРєР° РїРѕ РІСЃРµРј РІРѕР·РјРѕР¶РЅС‹Рј РїРѕР»СЏРј, Р±СЂР°С‚СЊ РёР· РєР»РёРµРЅС‚Р°
+ * - С„РёР»СЊС‚СЂР°С†РёСЏ (СѓС‡РёС‚С‹РІР°С‚СЊ РЅР°СЃС‚СЂРѕР№РєРё, РЅР°РїСЂ. С‚РѕР»СЊРєРѕ СЃРїРµС†.С†РµРЅР°)
+ * - РїРѕСЃС‚СЂР°РЅРёС‡РЅР°СЏ РЅР°РІРёРіР°С†РёСЏ
  */
 $arParams['PAGE'] = (1 < ($page = $_REQUEST['PAGE']) ? intval($page) : 1);
 
 $arParams['ORDER_BY']        = !empty($_REQUEST['OB']) ? $_REQUEST['OB'] : false;
 $arParams['ORDER_DIRECTION'] = !empty($_REQUEST['OD']) ? mb_strtolower($_REQUEST['OD']) : false;
-// возможные варианты сортировок
+// РІРѕР·РјРѕР¶РЅС‹Рµ РІР°СЂРёР°РЅС‚С‹ СЃРѕСЂС‚РёСЂРѕРІРѕРє
 $orderBy = array(
     'D' => 'date',
     'N' => 'name',
@@ -69,22 +69,22 @@ if (!in_array($arParams['ORDER_DIRECTION'], array('asc', 'desc'))) {
 
 $filterParams = (array_key_exists('FS', $_REQUEST) ? $_REQUEST['FS'] : array());
 
-/************************** клиент, запрос к сервису **************************/
-// Параметры запроса
+/************************** РєР»РёРµРЅС‚, Р·Р°РїСЂРѕСЃ Рє СЃРµСЂРІРёСЃСѓ **************************/
+// РџР°СЂР°РјРµС‚СЂС‹ Р·Р°РїСЂРѕСЃР°
 $client = new maxCacheXmlClient(array(
     'api_version' => 1,
     'dealer_id'   => $dealerId,
     'password'    => $password,
     'cache_dir'   => $_SERVER["DOCUMENT_ROOT"] . BX_ROOT . '/cache/maxposter/',
 ));
-// Запрос к сервису / кешу
+// Р—Р°РїСЂРѕСЃ Рє СЃРµСЂРІРёСЃСѓ / РєРµС€Сѓ
 $client->setRequestThemeName($arParams['REQUEST_THEME']);
-// TODO: настройки и параметры
+// TODO: РЅР°СЃС‚СЂРѕР№РєРё Рё РїР°СЂР°РјРµС‚СЂС‹
 $client->setGetParameters(array(
     'page'      => $arParams['PAGE'],
     'page_size' => 20,
 ));
-// TODO: ловить входящие данные
+// TODO: Р»РѕРІРёС‚СЊ РІС…РѕРґСЏС‰РёРµ РґР°РЅРЅС‹Рµ
 $searchParams = array();
 if ($arParams['ORDER_BY']) {
     $searchParams['order_by'] = $arParams['ORDER_BY'];
@@ -96,10 +96,10 @@ $searchParams = array_merge($searchParams, $filterParams);
 $client->setRequestParams(array('search' => $searchParams));
 
 $domXml = $client->getXml()->saveXML();
-// при ошибке запроса
+// РїСЂРё РѕС€РёР±РєРµ Р·Р°РїСЂРѕСЃР°
 if ($client->getResponseThemeName() == 'error') {
     CHTTP::SetStatus("404 Not Found");
-    // TODO: получать message из ответа сервера
+    // TODO: РїРѕР»СѓС‡Р°С‚СЊ message РёР· РѕС‚РІРµС‚Р° СЃРµСЂРІРµСЂР°
     ShowError(GetMessage('MAX_NOT_FOUND'));
     return;
 }
@@ -110,20 +110,20 @@ if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = $domXml->saveXML();
 }
 $xml = new CDataXML();
-// Лучше бы через
+// Р›СѓС‡С€Рµ Р±С‹ С‡РµСЂРµР·
 // $xml->Load('/path/to/file');
 $xml->LoadString($data);
 
-// получаем данные
+// РїРѕР»СѓС‡Р°РµРј РґР°РЅРЅС‹Рµ
 /**
- * В минимальном варианте:
- * - фото
- * - марка
- * - модель
- * - год выпуска
- * + объём двигателя
- * - пробег
- * - цена
+ * Р’ РјРёРЅРёРјР°Р»СЊРЅРѕРј РІР°СЂРёР°РЅС‚Рµ:
+ * - С„РѕС‚Рѕ
+ * - РјР°СЂРєР°
+ * - РјРѕРґРµР»СЊ
+ * - РіРѕРґ РІС‹РїСѓСЃРєР°
+ * + РѕР±СЉС‘Рј РґРІРёРіР°С‚РµР»СЏ
+ * - РїСЂРѕР±РµРі
+ * - С†РµРЅР°
  */
 $arVehicles = array();
 $i = 0;
@@ -134,7 +134,7 @@ foreach ($xml->SelectNodes('/response/vehicles')->children() as $vNode) {
     $arVehicles[$i]['VEHICLE_ID'] = $vehicle['@']['vehicle_id'];
     $arVehicles[$i]['DEALER_ID']  = $vehicle['@']['dealer_id'];
     $arVehicles[$i]['URL_TO_VEHICLE'] = CComponentEngine::MakePathFromTemplate($arParams['URL_TEMPLATES_VEHICLE'], array('VEHICLE_ID' => $arVehicles[$i]['VEHICLE_ID']));
-    // Фото
+    // Р¤РѕС‚Рѕ
     if (array_key_exists('photo', $vehicle['#']) && array_key_exists('0', $vehicle['#']['photo'])) {
         $arVehicles[$i]['PHOTO'] = $vehicle['#']['photo']['0']['@']['file_name'];
         $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/upload/maxposter/' . $arVehicles[$i]['DEALER_ID'] . '/' . $arVehicles[$i]['VEHICLE_ID'] . '/original/';
@@ -188,23 +188,23 @@ foreach ($xml->SelectNodes('/response/vehicles')->children() as $vNode) {
             fclose($from);fclose($to);
         }
     }
-    // Марка и модель
+    // РњР°СЂРєР° Рё РјРѕРґРµР»СЊ
     $arVehicles[$i]['MARK']['ID']    = $vehicle['#']['mark']['0']['@']['mark_id'];
     $arVehicles[$i]['MARK']['NAME']  = $vehicle['#']['mark']['0']['#'];
     $arVehicles[$i]['MODEL']['ID']   = $vehicle['#']['model']['0']['@']['model_id'];
     $arVehicles[$i]['MODEL']['NAME'] = $vehicle['#']['model']['0']['#'];
-    // год выпуска
+    // РіРѕРґ РІС‹РїСѓСЃРєР°
     $arVehicles[$i]['YEAR'] = $vehicle['#']['year']['0']['#'];
-    // пробег
+    // РїСЂРѕР±РµРі
     $arVehicles[$i]['DISTANCE']      = $vehicle['#']['mileage']['0']['#']['value']['0']['#'];
     $arVehicles[$i]['DISTANCE_UNIT'] = $vehicle['#']['mileage']['0']['#']['value']['0']['@']['unit'];
-    // цена
+    // С†РµРЅР°
     $arVehicles[$i]['PRICE']         = $vehicle['#']['price']['0']['#']['value']['0']['#'];
     $arVehicles[$i]['PRICE_UNIT']    = $vehicle['#']['price']['0']['#']['value']['0']['@']['unit'];
     $arVehicles[$i]['PRICE_RUB']     = $vehicle['#']['price']['0']['#']['value']['0']['@']['rub_price'];
-    // спец.цена и старая цена
-    // Остальное:
-    // объём двигателя
+    // СЃРїРµС†.С†РµРЅР° Рё СЃС‚Р°СЂР°СЏ С†РµРЅР°
+    // РћСЃС‚Р°Р»СЊРЅРѕРµ:
+    // РѕР±СЉС‘Рј РґРІРёРіР°С‚РµР»СЏ
     $arVehicles[$i]['ENGINE_VOLUME'] = $vehicle['#']['engine']['0']['#']['volume']['0']['#'];
 
     $i++;

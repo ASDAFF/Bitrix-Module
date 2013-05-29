@@ -1,7 +1,7 @@
 <?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 
-// Ìîäóëü Ìàêñïîòåðà
+// ÐœÐ¾Ð´ÑƒÐ»ÑŒ ÐœÐ°ÐºÑÐ¿Ð¾Ñ‚ÐµÑ€Ð°
 $moduleId = 'maxposter.api';
 if (!CModule::IncludeModule($moduleId))
 {

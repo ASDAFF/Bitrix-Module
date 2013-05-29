@@ -1,8 +1,8 @@
 <?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-$MESS['SET_STATUS_404']     = 'Óñòàíàâëèâàòü ñòàòóñ 404, åñëè íå íàéäåí ýëåìåíò';
+$MESS['SET_STATUS_404']     = 'Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°Ñ‚ÑŒ ÑÑ‚Ð°Ñ‚ÑƒÑ 404, ÐµÑÐ»Ð¸ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚';
 
-$MESS['MAX_API_LOGIN']      = 'Ëîãèí â ñèñòåìå';
-$MESS['MAX_API_PASSWORD']   = 'Ïàðîëü';
+$MESS['MAX_API_LOGIN']      = 'Ð›Ð¾Ð³Ð¸Ð½ Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ';
+$MESS['MAX_API_PASSWORD']   = 'ÐŸÐ°Ñ€Ð¾Ð»ÑŒ';
 
-$MESS['MAX_URL_TEMPLATES_INDEX']   = 'Ñïèñîê àâòîìîáèëåé';
+$MESS['MAX_URL_TEMPLATES_INDEX']   = 'Ð¡Ð¿Ð¸ÑÐ¾Ðº Ð°Ð²Ñ‚Ð¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹';

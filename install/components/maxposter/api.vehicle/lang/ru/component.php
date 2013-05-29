@@ -1,2 +1,2 @@
 <?php
-$MESS['MAXPOSTER_API_MODULE_NOT_INSTALL'] = 'Íåîáõîäèìî óñòàíîâèòü ìîäóëü Maxposter';
+$MESS['MAXPOSTER_API_MODULE_NOT_INSTALL'] = 'ÐÐµÐ¾Ð±Ñ…Ð¾Ð´Ð¸Ð¼Ð¾ ÑƒÑÑ‚Ð°Ð½Ð¾Ð²Ð¸Ñ‚ÑŒ Ð¼Ð¾Ð´ÑƒÐ»ÑŒ Maxposter';

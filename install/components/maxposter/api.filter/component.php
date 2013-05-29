@@ -5,7 +5,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 /* @var $APPLICATION CMain */
 /* @var $this CBitrixComponent */
 
-// Ìîäóëü Ìàêñïîòåðà
+// ÐœÐ¾Ð´ÑƒÐ»ÑŒ ÐœÐ°ÐºÑÐ¿Ð¾Ñ‚ÐµÑ€Ð°
 $moduleId = 'maxposter.api';
 if (!CModule::IncludeModule($moduleId))
 {
@@ -13,11 +13,11 @@ if (!CModule::IncludeModule($moduleId))
 	return;
 }
 
-// Ïàðàìåòðû ìîäóëÿ
+// ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð¼Ð¾Ð´ÑƒÐ»Ñ
 $dealerId = COption::GetOptionString($moduleId, 'MAX_API_LOGIN');
 $password = COption::GetOptionString($moduleId, 'MAX_API_PASSWORD');
 
-/**************************** ïàðàìåòðû êîìïîíåíòà ****************************/
+/**************************** Ð¿Ð°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ ÐºÐ¾Ð¼Ð¿Ð¾Ð½ÐµÐ½Ñ‚Ð° ****************************/
 if (!empty($arParams['MAX_API_LOGIN'])) {
     $dealerId = $arParams['MAX_API_LOGIN'];
 }
@@ -34,22 +34,22 @@ foreach ($arUrlDefault as $urlKey => $url) {
 }
 $filterParams = (array_key_exists('FS', $_REQUEST) ? $_REQUEST['FS'] : array());
 
- /************************** êëèåíò, çàïðîñ ê ñåðâèñó **************************/
-// Ïàðàìåòðû çàïðîñà
+ /************************** ÐºÐ»Ð¸ÐµÐ½Ñ‚, Ð·Ð°Ð¿Ñ€Ð¾Ñ Ðº ÑÐµÑ€Ð²Ð¸ÑÑƒ **************************/
+// ÐŸÐ°Ñ€Ð°Ð¼ÐµÑ‚Ñ€Ñ‹ Ð·Ð°Ð¿Ñ€Ð¾ÑÐ°
 $client = new maxCacheXmlClient(array(
     'api_version' => 1,
     'dealer_id'   => $dealerId,
     'password'    => $password,
     'cache_dir'   => $_SERVER["DOCUMENT_ROOT"] . BX_ROOT . '/cache/maxposter/',
 ));
-// Çàïðîñ ê ñåðâèñó / êåøó
+// Ð—Ð°Ð¿Ñ€Ð¾Ñ Ðº ÑÐµÑ€Ð²Ð¸ÑÑƒ / ÐºÐµÑˆÑƒ
 $client->setRequestThemeName('search_form');
 
 $domXml = $client->getXml()->saveXML();
-// ïðè îøèáêå çàïðîñà
+// Ð¿Ñ€Ð¸ Ð¾ÑˆÐ¸Ð±ÐºÐµ Ð·Ð°Ð¿Ñ€Ð¾ÑÐ°
 if ($client->getResponseThemeName() == 'error') {
     CHTTP::SetStatus("404 Not Found");
-    // TODO: ïîëó÷àòü message èç îòâåòà ñåðâåðà
+    // TODO: Ð¿Ð¾Ð»ÑƒÑ‡Ð°Ñ‚ÑŒ message Ð¸Ð· Ð¾Ñ‚Ð²ÐµÑ‚Ð° ÑÐµÑ€Ð²ÐµÑ€Ð°
     ShowError(GetMessage('MAX_NOT_FOUND'));
     return;
 }
@@ -60,7 +60,7 @@ if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = $domXml->saveXML();
 }
 $xml = new CDataXML();
-// Ëó÷øå áû ÷åðåç
+// Ð›ÑƒÑ‡ÑˆÐµ Ð±Ñ‹ Ñ‡ÐµÑ€ÐµÐ·
 // $xml->Load('/path/to/file');
 $xml->LoadString($data);
 
@@ -81,7 +81,7 @@ if ($sf) {
                 $arResult['FORM'][$sfFieldName]['TYPE'] = 'LIST';
                 $sfFieldOpts = $sfField->children();
                 foreach ($sfFieldOpts as $sfFieldOption) {
-                    // äëÿ ìîäåëåé
+                    // Ð´Ð»Ñ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹
                     if ('optgroup' == $sfFieldOption->name()) {
                         foreach ($sfFieldOption->children() as $sfFieldOptg) {
                             $arResult['FORM'][$sfFieldName]['OPTIONS'][] = array(

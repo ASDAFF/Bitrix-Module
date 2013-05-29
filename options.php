@@ -9,7 +9,7 @@ CModule::IncludeModule($module_id);
 IncludeModuleLangFile(__FILE__);
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/options.php");
 
-// сброс настроек
+// СЃР±СЂРѕСЃ РЅР°СЃС‚СЂРѕРµРє
 if (
     ($REQUEST_METHOD == "GET")
     && ($APPLICATION->GetGroupRight($module_id) == "W")
@@ -18,7 +18,7 @@ if (
     COption::RemoveOption($module_id);
 }
 
-// TODO: поддержать мультисайтовость, см. socialservices
+// TODO: РїРѕРґРґРµСЂР¶Р°С‚СЊ РјСѓР»СЊС‚РёСЃР°Р№С‚РѕРІРѕСЃС‚СЊ, СЃРј. socialservices
 $arDisplayOptions = array(
     array('MAX_API_LOGIN', GetMessage('MAX_API_LOGIN'), array('text', 20)),
     array('MAX_API_PASSWORD', GetMessage('MAX_API_PASSWORD'), array('text', 40)),
@@ -42,7 +42,7 @@ if ($REQUEST_METHOD == "POST" && strlen($Update) > 0 && $APPLICATION->GetGroupRi
 
         COption::SetOptionString($module_id, $name[0], $val);
     }
-    // Очистить кеш при смене логина
+    // РћС‡РёСЃС‚РёС‚СЊ РєРµС€ РїСЂРё СЃРјРµРЅРµ Р»РѕРіРёРЅР°
     if ($oldLogin != $newLogin) {
         ;
     }

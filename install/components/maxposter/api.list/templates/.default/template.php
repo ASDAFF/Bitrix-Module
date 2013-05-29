@@ -25,7 +25,7 @@
                     echo (($isActive = ('name' == $arParams['ORDER_BY'])) && ('asc' == $arParams['ORDER_DIRECTION']))
                         ? $arResult['URL']['ORDER_BY_NAME_DESC']
                         : $arResult['URL']['ORDER_BY_NAME_ASC']
-                ?>">Марка</a>&nbsp;
+                ?>">РњР°СЂРєР°</a>&nbsp;
                 <a href="<?php echo $arResult['URL']['ORDER_BY_NAME_ASC'] ?>" class="sort_up"><img
                         src="/bitrix/templates/passage_inner/images/sort_up<?php echo $isActive && 'asc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
@@ -37,7 +37,7 @@
                     echo (($isActive = ('name' == $arParams['ORDER_BY'])) && ('asc' == $arParams['ORDER_DIRECTION']))
                         ? $arResult['URL']['ORDER_BY_NAME_DESC']
                         : $arResult['URL']['ORDER_BY_NAME_ASC']
-                ?>">Модель&nbsp;
+                ?>">РњРѕРґРµР»СЊ&nbsp;
                 <a href="<?php echo $arResult['URL']['ORDER_BY_NAME_ASC'] ?>" class="sort_up"><img
                         src="/bitrix/templates/passage_inner/images/sort_up<?php echo $isActive && 'asc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
@@ -49,7 +49,7 @@
                     echo (($isActive = ('year' == $arParams['ORDER_BY'])) && ('desc' == $arParams['ORDER_DIRECTION']))
                         ? $arResult['URL']['ORDER_BY_YEAR_ASC']
                         : $arResult['URL']['ORDER_BY_YEAR_DESC']
-                ?>">Год выпуска&nbsp;
+                ?>">Р“РѕРґ РІС‹РїСѓСЃРєР°&nbsp;
                 <a href="<?php echo $arResult['URL']['ORDER_BY_YEAR_ASC'] ?>" class="sort_up"><img
                         src="/bitrix/templates/passage_inner/images/sort_up<?php echo $isActive && 'asc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
@@ -57,12 +57,12 @@
                         src="/bitrix/templates/passage_inner/images/sort_down<?php echo $isActive && 'desc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
             </th>
-            <th>Объём двигателя</th>
+            <th>РћР±СЉС‘Рј РґРІРёРіР°С‚РµР»СЏ</th>
             <th><a href="<?php
                     echo (($isActive = ('distance' == $arParams['ORDER_BY'])) && ('asc' == $arParams['ORDER_DIRECTION']))
                         ? $arResult['URL']['ORDER_BY_DISTANCE_DESC']
                         : $arResult['URL']['ORDER_BY_DISTANCE_ASC']
-                ?>">Пробег&nbsp;
+                ?>">РџСЂРѕР±РµРі&nbsp;
                 <a href="<?php echo $arResult['URL']['ORDER_BY_DISTANCE_ASC'] ?>" class="sort_up"><img
                         src="/bitrix/templates/passage_inner/images/sort_up<?php echo $isActive && 'asc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
@@ -74,7 +74,7 @@
                     echo (($isActive = ('price' == $arParams['ORDER_BY'])) && ('asc' == $arParams['ORDER_DIRECTION']))
                         ? $arResult['URL']['ORDER_BY_PRICE_DESC']
                         : $arResult['URL']['ORDER_BY_PRICE_ASC']
-                ?>">Цена&nbsp;
+                ?>">Р¦РµРЅР°&nbsp;
                 <a href="<?php echo $arResult['URL']['ORDER_BY_PRICE_ASC'] ?>" class="sort_up"><img
                         src="/bitrix/templates/passage_inner/images/sort_up<?php echo $isActive && 'asc' == $arParams['ORDER_DIRECTION'] ? '_akt' : '' ?>.png"
                         alt="" border="0" /></a>
@@ -99,8 +99,8 @@
                     echo ((18 < mb_strlen($arVehicle['MODEL']['NAME']) && $pos = mb_strpos($arVehicle['MODEL']['NAME'], '(', 5)) ? trim(mb_substr($arVehicle['MODEL']['NAME'], 0, $pos)) : $arVehicle['MODEL']['NAME'])
                 ?></a></td>
                 <td><?php echo $arVehicle['YEAR'] ?></td>
-                <td><?php echo $arVehicle['ENGINE_VOLUME'] ?>&nbsp;см&#179;</td>
-                <td><?php echo number_format($arVehicle['DISTANCE'], '0', '.', ' '), ' ', ('km' == $arVehicle['DISTANCE_UNIT'] ? 'км' : 'миль'); ?></td>
+                <td><?php echo $arVehicle['ENGINE_VOLUME'] ?>&nbsp;СЃРј&#179;</td>
+                <td><?php echo number_format($arVehicle['DISTANCE'], '0', '.', ' '), ' ', ('km' == $arVehicle['DISTANCE_UNIT'] ? 'РєРј' : 'РјРёР»СЊ'); ?></td>
                 <td><?php echo maxPrice($arVehicle['PRICE'], $arVehicle['PRICE_UNIT']) ?></td>
             </tr>
         <?php endforeach ?>

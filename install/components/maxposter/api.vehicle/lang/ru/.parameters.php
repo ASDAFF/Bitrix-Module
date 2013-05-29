@@ -1,24 +1,24 @@
 <?php
 if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
-$MESS['ADD_SECTIONS_CHAIN'] = 'Âêëþ÷àòü â öåïî÷êó íàâèãàöèè';
-$MESS['SET_STATUS_404']     = 'Óñòàíàâëèâàòü ñòàòóñ 404, åñëè íå íàéäåí ýëåìåíò';
+$MESS['ADD_SECTIONS_CHAIN'] = 'Ð’ÐºÐ»ÑŽÑ‡Ð°Ñ‚ÑŒ Ð² Ñ†ÐµÐ¿Ð¾Ñ‡ÐºÑƒ Ð½Ð°Ð²Ð¸Ð³Ð°Ñ†Ð¸Ð¸';
+$MESS['SET_STATUS_404']     = 'Ð£ÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°Ñ‚ÑŒ ÑÑ‚Ð°Ñ‚ÑƒÑ 404, ÐµÑÐ»Ð¸ Ð½Ðµ Ð½Ð°Ð¹Ð´ÐµÐ½ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚';
 
-$MESS['MAX_API_LOGIN']      = 'Ëîãèí â ñèñòåìå';
-$MESS['MAX_API_PASSWORD']   = 'Ïàðîëü';
+$MESS['MAX_API_LOGIN']      = 'Ð›Ð¾Ð³Ð¸Ð½ Ð² ÑÐ¸ÑÑ‚ÐµÐ¼Ðµ';
+$MESS['MAX_API_PASSWORD']   = 'ÐŸÐ°Ñ€Ð¾Ð»ÑŒ';
 
-$MESS['VEHICLE_ID']         = 'Êîä àâòî';
+$MESS['VEHICLE_ID']         = 'ÐšÐ¾Ð´ Ð°Ð²Ñ‚Ð¾';
 
-$MESS['SHOW_MARK_MODEL']    = 'Íàçâàíèå ìàðêè è ìîäåëè';
-$MESS['SHOW_COLOR']         = 'Öâåò àâòî';
-$MESS['SHOW_CUSTOMS']       = 'Òàìîæåííûå ñáîðû';
-$MESS['SHOW_CONDITION']     = 'Ñîñòîÿíèå àâòî';
-$MESS['SHOW_AVAILABILITY']  = 'Èíôîðìàöèÿ î äîñòóïíîñòè (íàëè÷èè)';
-$MESS['SHOW_PTS']           = 'Õîçÿåâ ïî ÏÒÑ';
+$MESS['SHOW_MARK_MODEL']    = 'ÐÐ°Ð·Ð²Ð°Ð½Ð¸Ðµ Ð¼Ð°Ñ€ÐºÐ¸ Ð¸ Ð¼Ð¾Ð´ÐµÐ»Ð¸';
+$MESS['SHOW_COLOR']         = 'Ð¦Ð²ÐµÑ‚ Ð°Ð²Ñ‚Ð¾';
+$MESS['SHOW_CUSTOMS']       = 'Ð¢Ð°Ð¼Ð¾Ð¶ÐµÐ½Ð½Ñ‹Ðµ ÑÐ±Ð¾Ñ€Ñ‹';
+$MESS['SHOW_CONDITION']     = 'Ð¡Ð¾ÑÑ‚Ð¾ÑÐ½Ð¸Ðµ Ð°Ð²Ñ‚Ð¾';
+$MESS['SHOW_AVAILABILITY']  = 'Ð˜Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ Ð¾ Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ð¾ÑÑ‚Ð¸ (Ð½Ð°Ð»Ð¸Ñ‡Ð¸Ð¸)';
+$MESS['SHOW_PTS']           = 'Ð¥Ð¾Ð·ÑÐµÐ² Ð¿Ð¾ ÐŸÐ¢Ð¡';
 
-$MESS['SHOW_CONTACTS']      = 'Êîíòàêòû';
-$MESS['SHOW_DESCRIPTION']   = 'Äîïîëíèòåëüíàÿ èíôîðìàöèÿ';
-$MESS['SHOW_INSPECTION']    = 'Ìåñòî îñìîòðà';
-$MESS['SHOW_ADRESS']        = 'Àäðåñ (ñàëîíà)';
+$MESS['SHOW_CONTACTS']      = 'ÐšÐ¾Ð½Ñ‚Ð°ÐºÑ‚Ñ‹';
+$MESS['SHOW_DESCRIPTION']   = 'Ð”Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð°Ñ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ñ';
+$MESS['SHOW_INSPECTION']    = 'ÐœÐµÑÑ‚Ð¾ Ð¾ÑÐ¼Ð¾Ñ‚Ñ€Ð°';
+$MESS['SHOW_ADRESS']        = 'ÐÐ´Ñ€ÐµÑ (ÑÐ°Ð»Ð¾Ð½Ð°)';
 
-$MESS['MAX_URL_TEMPLATES_INDEX']   = 'Ñïèñîê àâòîìîáèëåé';
-$MESS['MAX_URL_TEMPLATES_VEHICLE'] = 'Ïðîñìîòð àâòîìîáèëÿ';
+$MESS['MAX_URL_TEMPLATES_INDEX']   = 'Ð¡Ð¿Ð¸ÑÐ¾Ðº Ð°Ð²Ñ‚Ð¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹';
+$MESS['MAX_URL_TEMPLATES_VEHICLE'] = 'ÐŸÑ€Ð¾ÑÐ¼Ð¾Ñ‚Ñ€ Ð°Ð²Ñ‚Ð¾Ð¼Ð¾Ð±Ð¸Ð»Ñ';

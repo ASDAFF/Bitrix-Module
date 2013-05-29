@@ -12,13 +12,13 @@ function maxPrice($price, $unit = 'rub') {
     $prefix = $postfix = '';
     switch ($unit) {
         case 'usd':
-            $prefix = 'ˆ&nbsp;';
+            $prefix = 'â‚¬&nbsp;';
             break;
         case 'eur';
             $prefix = '$&nbsp;';
             break;
         default:
-            $postfix = '&nbsp;ðóá.';
+            $postfix = '&nbsp;Ñ€ÑƒÐ±.';
             break;
     }
     $price = str_replace(' ', '&nbsp;', number_format($price, 0, '.', ' '));

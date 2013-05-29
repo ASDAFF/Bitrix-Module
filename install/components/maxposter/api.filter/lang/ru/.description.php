@@ -1,4 +1,4 @@
 <?php
-$MESS['MAX_NAME']   = 'Êàòàëîã MaxPoster';
-$MESS['COMP_NAME']  = 'Ôèëüòð';
-$MESS['COMP_DESCR'] = 'Êàòàëîã: ôèëüòð ñïèñêà àâòîìîáèëåé.';
+$MESS['MAX_NAME']   = 'ÐšÐ°Ñ‚Ð°Ð»Ð¾Ð³ MaxPoster';
+$MESS['COMP_NAME']  = 'Ð¤Ð¸Ð»ÑŒÑ‚Ñ€';
+$MESS['COMP_DESCR'] = 'ÐšÐ°Ñ‚Ð°Ð»Ð¾Ð³: Ñ„Ð¸Ð»ÑŒÑ‚Ñ€ ÑÐ¿Ð¸ÑÐºÐ° Ð°Ð²Ñ‚Ð¾Ð¼Ð¾Ð±Ð¸Ð»ÐµÐ¹.';

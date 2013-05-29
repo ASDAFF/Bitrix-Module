@@ -3,7 +3,7 @@ if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 /* @var $arParams array */
 /* @var $arResult array */
 
-// Модуль Макспотера
+// РњРѕРґСѓР»СЊ РњР°РєСЃРїРѕС‚РµСЂР°
 $moduleId = 'maxposter.api';
 if (!CModule::IncludeModule($moduleId))
 {
@@ -13,13 +13,13 @@ if (!CModule::IncludeModule($moduleId))
 
 #var_dump($APPLICATION->GetCurPage());
 #var_dump($APPLICATION->GetCurPageParam());
-#$APPLICATION->AddChainItem("Это авто", '');
+#$APPLICATION->AddChainItem("Р­С‚Рѕ Р°РІС‚Рѕ", '');
 
-// Параметры модуля
+// РџР°СЂР°РјРµС‚СЂС‹ РјРѕРґСѓР»СЏ
 $dealerId = COption::GetOptionString($moduleId, 'MAX_API_LOGIN');
 $password = COption::GetOptionString($moduleId, 'MAX_API_PASSWORD');
 
-/**************************** параметры компонента ****************************/
+/**************************** РїР°СЂР°РјРµС‚СЂС‹ РєРѕРјРїРѕРЅРµРЅС‚Р° ****************************/
 if (!empty($arParams['MAX_API_LOGIN'])) {
     $dealerId = $arParams['MAX_API_LOGIN'];
 }
@@ -43,15 +43,15 @@ foreach ($arUrlDefault as $urlKey => $url) {
     }
 }
 
-/************************** клиент, запрос к сервису **************************/
-// Параметры запроса
+/************************** РєР»РёРµРЅС‚, Р·Р°РїСЂРѕСЃ Рє СЃРµСЂРІРёСЃСѓ **************************/
+// РџР°СЂР°РјРµС‚СЂС‹ Р·Р°РїСЂРѕСЃР°
 $client = new maxCacheXmlClient(array(
     'api_version' => 1,
     'dealer_id'   => $dealerId,
     'password'    => $password,
     'cache_dir'   => $_SERVER["DOCUMENT_ROOT"] . BX_ROOT . '/cache/maxposter/',
 ));
-// Запрос к сервису / кешу
+// Р—Р°РїСЂРѕСЃ Рє СЃРµСЂРІРёСЃСѓ / РєРµС€Сѓ
 try {
     $client->setRequestThemeName($arParams['VEHICLE_ID']);
 } catch (maxException $e) {
@@ -61,7 +61,7 @@ try {
     return;
 }
 $domXml = $client->getXml()->saveXML();
-// при ошибке запроса
+// РїСЂРё РѕС€РёР±РєРµ Р·Р°РїСЂРѕСЃР°
 if ($client->getResponseThemeName() == 'error') {
     CHTTP::SetStatus("404 Not Found");
     ShowError(GetMessage('MAX_VEHICLE_NOT_FOUND'));
@@ -74,14 +74,14 @@ if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = $domXml->saveXML();
 }
 $xml = new CDataXML();
-// Лучше бы через
+// Р›СѓС‡С€Рµ Р±С‹ С‡РµСЂРµР·
 // $xml->Load('/path/to/file');
 $xml->LoadString($data);
 
 /* @var $vehicle CDataXMLNode */
 $vehicle = $xml->SelectNodes('/response/vehicle');
 
-// Формирование результатов
+// Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 $arResult = array();
 $arResult['ID']         = intval($arParams['VEHICLE_ID']);
 $arResult['DEALER_ID']  = intval($vehicle->getAttribute('dealer_id'));
@@ -90,14 +90,14 @@ $arResult['MARK_NAME']  = $xml->SelectNodes('/response/vehicle/mark')->textConte
 $arResult['MODEL_ID']   = $xml->SelectNodes('/response/vehicle/model')->getAttribute('model_id');
 $arResult['MODEL_NAME'] = $xml->SelectNodes('/response/vehicle/model')->textContent();
 
-// Заголовок на странице
+// Р—Р°РіРѕР»РѕРІРѕРє РЅР° СЃС‚СЂР°РЅРёС†Рµ
 if ($arParams['SET_TITLE']) {
     $appTitle = sprintf('%s %s', $arResult['MARK_NAME'], $arResult['MODEL_NAME']);
     $APPLICATION->SetTitle($appTitle);
     $APPLICATION->SetPageProperty('title', $appTitle);
 }
 
-// Основное
+// РћСЃРЅРѕРІРЅРѕРµ
 $arResult['YEAR']           = intval($xml->SelectNodes('/response/vehicle/year')->textContent());
 $arResult['PRICE']          = $xml->SelectNodes('/response/vehicle/price/value')->textContent();
 if ($pprice = $xml->SelectNodes('/response/vehicle/price/previous')) {
@@ -129,7 +129,7 @@ $arResult['PTS_OWNERS']     = $xml->SelectNodes('/response/vehicle/pts_owner_cou
 
 $arResult['WHEEL_PLACE']    = $xml->SelectNodes('/response/vehicle/steering_wheel/place')->textContent();
 
-// Опции авто
+// РћРїС†РёРё Р°РІС‚Рѕ
 $arResult['OPTIONS'] = array();
     $arOpt =& $arResult['OPTIONS'];
     if ($xml->SelectNodes('/response/vehicle/abs')) { $arOpt['ABS'] = true; }
@@ -163,7 +163,7 @@ $arResult['OPTIONS'] = array();
     if ($climate = $xml->SelectNodes('/response/vehicle/climate_control')) { $arOpt['CLIMATE_CONTROL'] = $climate->textContent(); }
     if ($audio = $xml->SelectNodes('/response/vehicle/multimedia')) { $arOpt['MULTIMEDIA'] = $audio->textContent(); }
 
-// Описание, контакты и проч.
+// РћРїРёСЃР°РЅРёРµ, РєРѕРЅС‚Р°РєС‚С‹ Рё РїСЂРѕС‡.
 $arResult['DESCRIPTION'] = '';
 if ($description = $xml->SelectNodes('/response/vehicle/description')) {
     $description = $description->textContent();
@@ -185,13 +185,13 @@ foreach ($phones as $node) {
         continue;
     }
     $arPhones[] = $node->textContent()
-        . (($ct = $node->getAttribute('from')) ? ' с ' . $ct . '-00' : '')
-        . (($ct = $node->getAttribute('to')) ? ' до ' . $ct . '-00' : '')
+        . (($ct = $node->getAttribute('from')) ? ' СЃ ' . $ct . '-00' : '')
+        . (($ct = $node->getAttribute('to')) ? ' РґРѕ ' . $ct . '-00' : '')
     ;
 }
 $arResult['PHONES'] = $arPhones;
 
-// Фотографии
+// Р¤РѕС‚РѕРіСЂР°С„РёРё
 $arResult['PHOTOS'] = array();
 $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/upload/maxposter/' . $arResult['DEALER_ID'] . '/' . $arResult['ID'] . '/original/';
 $path1 = sprintf('%s/upload/maxposter/%d/%d/big/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arResult['DEALER_ID'], $arResult['ID']);
