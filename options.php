@@ -23,14 +23,23 @@ $arDisplayOptions = array(
     array('MAX_API_LOGIN', GetMessage('MAX_API_LOGIN'), array('text', 20)),
     array('MAX_API_PASSWORD', GetMessage('MAX_API_PASSWORD'), array('text', 40)),
     array('MAX_UPLOAD_PATH', GetMessage('MAX_UPLOAD_PATH'), array('text', 40)),
+    array('MAX_PAGE_SIZE', GetMessage('MAX_PAGE_SIZE'), array('text', 4)),
+);
+$arPhotoOptions = array(
+    array('MAX_PHOTO_SIZE_BIG_WIDTH', GetMessage('MAX_PHOTO_SIZE_BIG_WIDTH'), array('text', 4)),
+    array('MAX_PHOTO_SIZE_BIG_HEIGHT', GetMessage('MAX_PHOTO_SIZE_BIG_HEIGHT'), array('text', 4)),
+    array('MAX_PHOTO_SIZE_MED_WIDTH', GetMessage('MAX_PHOTO_SIZE_MED_WIDTH'), array('text', 4)),
+    array('MAX_PHOTO_SIZE_MED_HEIGHT', GetMessage('MAX_PHOTO_SIZE_MED_HEIGHT'), array('text', 4)),
+    array('MAX_PHOTO_SIZE_SML_WIDTH', GetMessage('MAX_PHOTO_SIZE_SML_WIDTH'), array('text', 4)),
+    array('MAX_PHOTO_SIZE_SML_HEIGHT', GetMessage('MAX_PHOTO_SIZE_SML_HEIGHT'), array('text', 4)),
 );
 
 //
 if ($REQUEST_METHOD == "POST" && strlen($Update) > 0 && $APPLICATION->GetGroupRight($module_id) == "W" && check_bitrix_sessid()) {
     $oldLogin = COption::GetOptionString($module_id, 'MAX_API_LOGIN');
-    while(list($key,$name) = each($arDisplayOptions)) {
+    while (list($key,$name) = each($arDisplayOptions)) {
         $val = $$name[0];
-        if($name[2][0]=="checkbox" && $val != "Y") {
+        if ($name[2][0]=="checkbox" && $val != "Y") {
             $val="N";
         } elseif(!array_key_exists($name[0], $_POST)) {
             continue;
@@ -42,6 +51,16 @@ if ($REQUEST_METHOD == "POST" && strlen($Update) > 0 && $APPLICATION->GetGroupRi
 
         COption::SetOptionString($module_id, $name[0], $val);
     }
+    while (list($key,$name) = each($arPhotoOptions)) {
+        $val = $$name[0];
+        if ($name[2][0]=="checkbox" && $val != "Y") {
+            $val="N";
+        } elseif(!array_key_exists($name[0], $_POST)) {
+            continue;
+        }
+        COption::SetOptionString($module_id, $name[0], $val);
+    }
+
     // Очистить кеш при смене логина
     if ($oldLogin != $newLogin) {
         ;
@@ -57,6 +76,12 @@ $aTabs = array(
         "ICON"  => "main_settings",
         "TITLE" => GetMessage("MAIN_TAB_TITLE_SET"),
     ),
+    1 => array(
+        "DIV"   => "edit2",
+        "TAB"   => GetMessage("PHOTO_TAB_SET"),
+        "ICON"  => "main_settings",
+        "TITLE" => GetMessage("PHOTO_TAB_TITLE_SET"),
+    ),
 );
 $tabControl = new CAdminTabControl("tabControl", $aTabs);
 $tabControl->Begin();
@@ -68,6 +93,33 @@ $tabControl->Begin();
     <?php echo $tabControl->BeginNextTab() ?>
     <?php
         foreach($arDisplayOptions as $Option):
+            $val = COption::GetOptionString($module_id, $Option[0]);
+            $type = $Option[2];
+            ?>
+            <tr>
+                <td valign="top" width="30%"><?php
+                    if($type[0] == "checkbox") {
+                        echo "<label for=\"".htmlspecialchars($Option[0])."\">".$Option[1]."</label>";
+                    } else {
+                        echo $Option[1];
+                    } ?></td>
+                <td valign="top" width="70%"><?
+                    if($type[0]=="checkbox"):
+                        ?><input type="checkbox" name="<?echo htmlspecialchars($Option[0])?>" id="<?echo htmlspecialchars($Option[0])?>" value="Y"<?if($val=="Y")echo" checked";?>><?
+                    elseif($type[0]=="text"):
+                        ?><input type="text" size="<?echo $type[1]?>" maxlength="255" value="<?echo htmlspecialchars($val)?>" name="<?echo htmlspecialchars($Option[0])?>"><?
+                    elseif($type[0]=="textarea"):
+                        ?><textarea rows="<?echo $type[1]?>" cols="<?echo $type[2]?>" name="<?echo htmlspecialchars($Option[0])?>"><?echo htmlspecialchars($val)?></textarea><?
+                    endif;
+                    ?></td>
+            </tr>
+            <?php
+        endforeach;
+    ?>
+
+    <?php echo $tabControl->BeginNextTab() ?>
+    <?php
+        foreach($arPhotoOptions as $Option):
             $val = COption::GetOptionString($module_id, $Option[0]);
             $type = $Option[2];
             ?>

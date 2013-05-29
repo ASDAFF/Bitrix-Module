@@ -17,6 +17,19 @@ if (!CModule::IncludeModule($moduleId))
 $dealerId = COption::GetOptionString($moduleId, 'MAX_API_LOGIN');
 $password = COption::GetOptionString($moduleId, 'MAX_API_PASSWORD');
 
+$arSize1 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_BIG_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_BIG_HEIGHT'),
+);
+$arSize2 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_MED_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_MED_HEIGHT'),
+);
+$arSize3 = array(
+    'width'  => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_SML_WIDTH'),
+    'height' => COption::GetOptionString($moduleId, 'MAX_PHOTO_SIZE_SML_HEIGHT'),
+);
+
 /**************************** параметры компонента ****************************/
 if (!empty($arParams['MAX_API_LOGIN'])) {
     $dealerId = $arParams['MAX_API_LOGIN'];
@@ -82,7 +95,7 @@ $client->setRequestThemeName($arParams['REQUEST_THEME']);
 // TODO: настройки и параметры
 $client->setGetParameters(array(
     'page'      => $arParams['PAGE'],
-    'page_size' => 20,
+    'page_size' => COption::GetOptionString($moduleId, 'MAX_PAGE_SIZE'),
 ));
 // TODO: ловить входящие данные
 $searchParams = array();
@@ -103,11 +116,10 @@ if ($client->getResponseThemeName() == 'error') {
     ShowError(GetMessage('MAX_NOT_FOUND'));
     return;
 }
-
 if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = iconv('utf-8', SITE_CHARSET, $domXml);
 } else {
-    $data = $domXml->saveXML();
+    $data = $domXml;
 }
 $xml = new CDataXML();
 // Лучше бы через
@@ -134,60 +146,86 @@ foreach ($xml->SelectNodes('/response/vehicles')->children() as $vNode) {
     $arVehicles[$i]['VEHICLE_ID'] = $vehicle['@']['vehicle_id'];
     $arVehicles[$i]['DEALER_ID']  = $vehicle['@']['dealer_id'];
     $arVehicles[$i]['URL_TO_VEHICLE'] = CComponentEngine::MakePathFromTemplate($arParams['URL_TEMPLATES_VEHICLE'], array('VEHICLE_ID' => $arVehicles[$i]['VEHICLE_ID']));
+
     // Фото
     if (array_key_exists('photo', $vehicle['#']) && array_key_exists('0', $vehicle['#']['photo'])) {
-        $arVehicles[$i]['PHOTO'] = $vehicle['#']['photo']['0']['@']['file_name'];
-        $localPath = rtrim($_SERVER["DOCUMENT_ROOT"], '/') . '/upload/maxposter/' . $arVehicles[$i]['DEALER_ID'] . '/' . $arVehicles[$i]['VEHICLE_ID'] . '/original/';
-        $path1 = sprintf('%s/upload/maxposter/%d/%d/big/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID']);
-        $path2 = sprintf('%s/upload/maxposter/%d/%d/small/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID']);
-        $path3 = sprintf('%s/upload/maxposter/%d/%d/medium/', rtrim($_SERVER["DOCUMENT_ROOT"], '/'), $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID']);
-        $arSize1 = array(
-            'width'  => '255',
-            'height' => '191',
+        $photoFileName = $vehicle['#']['photo']['0']['@']['file_name'];
+        $webDirPath    = trim(COption::GetOptionString($moduleId, 'MAX_UPLOAD_PATH'), '/');
+        $basePhotoPath = sprintf(
+            '%s/%s/%d/%d',
+            rtrim($_SERVER["DOCUMENT_ROOT"], '/'),
+            $webDirPath,
+            $arVehicles[$i]['DEALER_ID'],
+            $arVehicles[$i]['VEHICLE_ID']
         );
-        $arSize2 = array(
-            'width'  => '77',
-            'height' => '58',
-        );
-        $arSize3 = array(
-            'width'  => '100',
-            'height' => '75',
-        );
-        CheckDirPath($localPath, true);
-        CheckDirPath($path1, true);
-        CheckDirPath($path2, true);
-        CheckDirPath($path3, true);
-        $path = sprintf('http://maxposter.ru/photo/%d/%d/orig/%s', $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $arVehicles[$i]['PHOTO']);
-        if (!file_exists($localPath . $arVehicles[$i]['PHOTO']) or ('Y' == $_GET['clear_cache'])) {
-            $from = fopen($path, 'rb', false);
-            $to   = fopen($localPath . $arVehicles[$i]['PHOTO'], 'wb', false);
-            $bytes = stream_copy_to_stream($from, $to);
 
-            if (@file_exists($localPath . $arVehicles[$i]['PHOTO']) && (10 > @filesize($localPath . $arVehicles[$i]['PHOTO']))) {
-                @unlink($localPath . $arVehicles[$i]['PHOTO']);
-                unset($arVehicles[$i]['PHOTO']);
-            } elseif ($bytes != @filesize($localPath . $arVehicles[$i]['PHOTO'])) {
-                @unlink($localPath . $arVehicles[$i]['PHOTO']);
-                unset($arVehicles[$i]['PHOTO']);
-            } else {
-                @chmod($localPath . $arVehicles[$i]['PHOTO'], 0666);
-                foreach (array(1,2,3) as $n) {
-                    $fileName = ${'path' . $n} . $arVehicles[$i]['PHOTO'];
-                    CFile::ResizeImageFile(
-                        $localPath . $arVehicles[$i]['PHOTO'],
-                        $fileName,
-                        ${'arSize' . $n},
-                        BX_RESIZE_IMAGE_PROPORTIONAL,
-                        array(),
-                        80,
-                        false
-                    );
-                    @chmod(${'path' . $n} . $arVehicles[$i]['PHOTO'], 0666);
-                }
-            }
-            fclose($from);fclose($to);
+        $arVehicles[$i]['PHOTO'] = array();
+        $arVehicles[$i]['PHOTO']['0']['ORIG']['0'] = sprintf('%s/original/%s', $basePhotoPath, $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['BIG']['0'] = sprintf('%s/big/%s', $basePhotoPath, $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['MED']['0'] = sprintf('%s/medium/%s', $basePhotoPath, $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['SML']['0'] = sprintf('%s/small/%s', $basePhotoPath, $photoFileName);
+
+        $arVehicles[$i]['PHOTO']['0']['ORIG']['1'] = sprintf('/%s/%d/%d/original/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['BIG']['1'] = sprintf('/%s/%d/%d/big/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['MED']['1'] = sprintf('/%s/%d/%d/medium/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+        $arVehicles[$i]['PHOTO']['0']['SML']['1'] = sprintf('/%s/%d/%d/small/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+
+        foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+            $tmpArSize = ${'arSize' . ($o + 1)};
+            $arVehicles[$i]['PHOTO']['0'][$photoSize]['2'] = $tmpArSize['width'];
+            $arVehicles[$i]['PHOTO']['0'][$photoSize]['3'] = $tmpArSize['height'];
         }
+
+        $sourcePhotoPath = sprintf(
+            'http://maxposter.ru/photo/%d/%d/orig/%s',
+            $arVehicles[$i]['DEALER_ID'],
+            $arVehicles[$i]['VEHICLE_ID'],
+            $photoFileName
+        );
+
+        foreach (array('original', 'big', 'medium', 'small') as $photoSize) {
+            CheckDirPath(sprintf('%s/%s/', $basePhotoPath, $photoSize), true);
+        }
+
+        foreach ($arVehicles[$i]['PHOTO'] as $c => $photoInfo) {
+            if (!file_exists($photoInfo['ORIG']['0']) or ('Y' == $_GET['clear_cache'])) {
+                foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
+                    @unlink($photoInfo[$photoSize]['0']);
+                }
+
+                $from = fopen($sourcePhotoPath, 'rb', false);
+                $to   = fopen($photoInfo['ORIG']['0'], 'wb', false);
+                $bytes = stream_copy_to_stream($from, $to);
+
+                if (
+                    (@file_exists($photoInfo['ORIG']['0']) && (10 > @filesize($photoInfo['ORIG']['0'])))
+                    or ($bytes != @filesize($photoInfo['ORIG']['0']))
+                ) {
+                    unset($arVehicles[$i]['PHOTO'][$c]);
+                    foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
+                        @unlink($photoInfo[$photoSize]['0']);
+                    }
+                } else {
+                    @chmod($photoInfo['ORIG']['0'], 0666);
+                    foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+                        CFile::ResizeImageFile(
+                            $photoInfo['ORIG']['0'],
+                            $photoInfo[$photoSize]['0'],
+                            ${'arSize' . ($o + 1)},
+                            BX_RESIZE_IMAGE_PROPORTIONAL,
+                            array(),
+                            80,
+                            false
+                        );
+                        @chmod($photoInfo[$photoSize]['0'], 0666);
+                    }
+                }
+                fclose($from);fclose($to);
+            }
+        }
+
     }
+
     // Марка и модель
     $arVehicles[$i]['MARK']['ID']    = $vehicle['#']['mark']['0']['@']['mark_id'];
     $arVehicles[$i]['MARK']['NAME']  = $vehicle['#']['mark']['0']['#'];
@@ -206,6 +244,10 @@ foreach ($xml->SelectNodes('/response/vehicles')->children() as $vNode) {
     // Остальное:
     // объём двигателя
     $arVehicles[$i]['ENGINE_VOLUME'] = $vehicle['#']['engine']['0']['#']['volume']['0']['#'];
+    $arVehicles[$i]['ENGINE_TYPE'] = $vehicle['#']['engine']['0']['#']['type']['0']['#'];
+    $arVehicles[$i]['ENGINE_POWER'] = $vehicle['#']['engine']['0']['#']['power']['0']['#'];
+    $arVehicles[$i]['GEARBOX'] = $vehicle['#']['gearbox']['0']['#']['type']['0']['#'];
+    $arVehicles[$i]['BODY_COLOR'] = $vehicle['#']['body']['0']['#']['color']['0']['#'];
 
     $i++;
 }
@@ -285,6 +327,7 @@ for ($i=$pStart;$i <= $arResult['PAGER']['TOTAL'] && $i < $pStart + $arResult['P
     $arResult['PAGER']['PAGES']['NUM'][$i] = urldecode($APPLICATION->GetCurPageParam(($i != 1 ? 'PAGE=' . $i . $addParams : $addParams), array('PAGE')));
 }
 $arResult['PAGER']['PAGES']['LAST'] = urldecode($APPLICATION->GetCurPageParam('PAGE=' . $arResult['PAGER']['TOTAL'] . $addParams, array('PAGE')));
+
 
 /*
 ob_start();
