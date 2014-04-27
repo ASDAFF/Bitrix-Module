@@ -57,7 +57,7 @@ if ($client->getResponseThemeName() == 'error') {
 if (mb_strtolower(SITE_CHARSET) != 'utf-8') {
     $data = iconv('utf-8', SITE_CHARSET, $domXml);
 } else {
-    $data = $domXml->saveXML();
+    $data = $domXml;
 }
 $xml = new CDataXML();
 // Лучше бы через
