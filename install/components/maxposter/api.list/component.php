@@ -138,118 +138,122 @@ $xml->LoadString($data);
  * - цена
  */
 $arVehicles = array();
+$xmlVehicles = $xml->SelectNodes('/response/vehicles');
 $i = 0;
-foreach ($xml->SelectNodes('/response/vehicles')->children() as $vNode) {
-    /* @var CDataXMLNode $vNode */
-    $vehicle = $vNode->__toArray();
-    $arVehicles[$i] = array();
-    $arVehicles[$i]['VEHICLE_ID'] = $vehicle['@']['vehicle_id'];
-    $arVehicles[$i]['DEALER_ID']  = $vehicle['@']['dealer_id'];
-    $arVehicles[$i]['URL_TO_VEHICLE'] = CComponentEngine::MakePathFromTemplate($arParams['URL_TEMPLATES_VEHICLE'], array('VEHICLE_ID' => $arVehicles[$i]['VEHICLE_ID']));
+if ($xmlVehicles && is_object($xmlVehicles)) { // Проверяем, что вообще есть объявления
+    foreach ($xmlVehicles->children() as $vNode) {
+        /* @var CDataXMLNode $vNode */
+        $vehicle = $vNode->__toArray();
+        $arVehicles[$i] = array();
+        $arVehicles[$i]['VEHICLE_ID'] = $vehicle['@']['vehicle_id'];
+        $arVehicles[$i]['DEALER_ID']  = $vehicle['@']['dealer_id'];
+        $arVehicles[$i]['URL_TO_VEHICLE'] = CComponentEngine::MakePathFromTemplate($arParams['URL_TEMPLATES_VEHICLE'], array('VEHICLE_ID' => $arVehicles[$i]['VEHICLE_ID']));
 
-    // Фото
-    if (array_key_exists('photo', $vehicle['#']) && array_key_exists('0', $vehicle['#']['photo'])) {
-        $photoFileName = $vehicle['#']['photo']['0']['@']['file_name'];
-        $webDirPath    = trim(COption::GetOptionString($moduleId, 'MAX_UPLOAD_PATH'), '/');
-        $basePhotoPath = sprintf(
-            '%s/%s/%d/%d',
-            rtrim($_SERVER["DOCUMENT_ROOT"], '/'),
-            $webDirPath,
-            $arVehicles[$i]['DEALER_ID'],
-            $arVehicles[$i]['VEHICLE_ID']
-        );
+        // Фото
+        if (array_key_exists('photo', $vehicle['#']) && array_key_exists('0', $vehicle['#']['photo'])) {
+            $photoFileName = $vehicle['#']['photo']['0']['@']['file_name'];
+            $webDirPath    = trim(COption::GetOptionString($moduleId, 'MAX_UPLOAD_PATH'), '/');
+            $basePhotoPath = sprintf(
+                '%s/%s/%d/%d',
+                rtrim($_SERVER["DOCUMENT_ROOT"], '/'),
+                $webDirPath,
+                $arVehicles[$i]['DEALER_ID'],
+                $arVehicles[$i]['VEHICLE_ID']
+            );
 
-        $arVehicles[$i]['PHOTO'] = array();
-        $arVehicles[$i]['PHOTO']['0']['ORIG']['0'] = sprintf('%s/original/%s', $basePhotoPath, $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['BIG']['0'] = sprintf('%s/big/%s', $basePhotoPath, $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['MED']['0'] = sprintf('%s/medium/%s', $basePhotoPath, $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['SML']['0'] = sprintf('%s/small/%s', $basePhotoPath, $photoFileName);
+            $arVehicles[$i]['PHOTO'] = array();
+            $arVehicles[$i]['PHOTO']['0']['ORIG']['0'] = sprintf('%s/original/%s', $basePhotoPath, $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['BIG']['0'] = sprintf('%s/big/%s', $basePhotoPath, $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['MED']['0'] = sprintf('%s/medium/%s', $basePhotoPath, $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['SML']['0'] = sprintf('%s/small/%s', $basePhotoPath, $photoFileName);
 
-        $arVehicles[$i]['PHOTO']['0']['ORIG']['1'] = sprintf('/%s/%d/%d/original/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['BIG']['1'] = sprintf('/%s/%d/%d/big/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['MED']['1'] = sprintf('/%s/%d/%d/medium/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
-        $arVehicles[$i]['PHOTO']['0']['SML']['1'] = sprintf('/%s/%d/%d/small/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['ORIG']['1'] = sprintf('/%s/%d/%d/original/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['BIG']['1'] = sprintf('/%s/%d/%d/big/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['MED']['1'] = sprintf('/%s/%d/%d/medium/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
+            $arVehicles[$i]['PHOTO']['0']['SML']['1'] = sprintf('/%s/%d/%d/small/%s', $webDirPath, $arVehicles[$i]['DEALER_ID'], $arVehicles[$i]['VEHICLE_ID'], $photoFileName);
 
-        foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
-            $tmpArSize = ${'arSize' . ($o + 1)};
-            $arVehicles[$i]['PHOTO']['0'][$photoSize]['2'] = $tmpArSize['width'];
-            $arVehicles[$i]['PHOTO']['0'][$photoSize]['3'] = $tmpArSize['height'];
-        }
+            foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+                $tmpArSize = ${'arSize' . ($o + 1)};
+                $arVehicles[$i]['PHOTO']['0'][$photoSize]['2'] = $tmpArSize['width'];
+                $arVehicles[$i]['PHOTO']['0'][$photoSize]['3'] = $tmpArSize['height'];
+            }
 
-        $sourcePhotoPath = sprintf(
-            'http://maxposter.ru/photo/%d/%d/orig/%s',
-            $arVehicles[$i]['DEALER_ID'],
-            $arVehicles[$i]['VEHICLE_ID'],
-            $photoFileName
-        );
+            $sourcePhotoPath = sprintf(
+                'http://maxposter.ru/photo/%d/%d/orig/%s',
+                $arVehicles[$i]['DEALER_ID'],
+                $arVehicles[$i]['VEHICLE_ID'],
+                $photoFileName
+            );
 
-        foreach (array('original', 'big', 'medium', 'small') as $photoSize) {
-            CheckDirPath(sprintf('%s/%s/', $basePhotoPath, $photoSize), true);
-        }
+            foreach (array('original', 'big', 'medium', 'small') as $photoSize) {
+                CheckDirPath(sprintf('%s/%s/', $basePhotoPath, $photoSize), true);
+            }
 
-        foreach ($arVehicles[$i]['PHOTO'] as $c => $photoInfo) {
-            if (!file_exists($photoInfo['ORIG']['0']) or ('Y' == $_GET['clear_cache'])) {
-                foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
-                    @unlink($photoInfo[$photoSize]['0']);
-                }
-
-                $from = fopen($sourcePhotoPath, 'rb', false);
-                $to   = fopen($photoInfo['ORIG']['0'], 'wb', false);
-                $bytes = stream_copy_to_stream($from, $to);
-
-                if (
-                    (@file_exists($photoInfo['ORIG']['0']) && (10 > @filesize($photoInfo['ORIG']['0'])))
-                    or ($bytes != @filesize($photoInfo['ORIG']['0']))
-                ) {
-                    unset($arVehicles[$i]['PHOTO'][$c]);
+            foreach ($arVehicles[$i]['PHOTO'] as $c => $photoInfo) {
+                if (!file_exists($photoInfo['ORIG']['0']) or ('Y' == $_GET['clear_cache'])) {
                     foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
                         @unlink($photoInfo[$photoSize]['0']);
                     }
-                } else {
-                    @chmod($photoInfo['ORIG']['0'], 0666);
-                    foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
-                        CFile::ResizeImageFile(
-                            $photoInfo['ORIG']['0'],
-                            $photoInfo[$photoSize]['0'],
-                            ${'arSize' . ($o + 1)},
-                            BX_RESIZE_IMAGE_PROPORTIONAL,
-                            array(),
-                            80,
-                            false
-                        );
-                        @chmod($photoInfo[$photoSize]['0'], 0666);
+
+                    $from = fopen($sourcePhotoPath, 'rb', false);
+                    $to   = fopen($photoInfo['ORIG']['0'], 'wb', false);
+                    $bytes = stream_copy_to_stream($from, $to);
+
+                    if (
+                        (@file_exists($photoInfo['ORIG']['0']) && (10 > @filesize($photoInfo['ORIG']['0'])))
+                        or ($bytes != @filesize($photoInfo['ORIG']['0']))
+                    ) {
+                        unset($arVehicles[$i]['PHOTO'][$c]);
+                        foreach (array('ORIG', 'BIG', 'MED', 'SML') as $photoSize) {
+                            @unlink($photoInfo[$photoSize]['0']);
+                        }
+                    } else {
+                        @chmod($photoInfo['ORIG']['0'], 0666);
+                        foreach (array('BIG', 'MED', 'SML') as $o => $photoSize) {
+                            CFile::ResizeImageFile(
+                                $photoInfo['ORIG']['0'],
+                                $photoInfo[$photoSize]['0'],
+                                ${'arSize' . ($o + 1)},
+                                BX_RESIZE_IMAGE_PROPORTIONAL,
+                                array(),
+                                80,
+                                false
+                            );
+                            @chmod($photoInfo[$photoSize]['0'], 0666);
+                        }
                     }
+                    fclose($from);fclose($to);
                 }
-                fclose($from);fclose($to);
             }
+
         }
 
+        // Марка и модель
+        $arVehicles[$i]['MARK']['ID']    = $vehicle['#']['mark']['0']['@']['mark_id'];
+        $arVehicles[$i]['MARK']['NAME']  = $vehicle['#']['mark']['0']['#'];
+        $arVehicles[$i]['MODEL']['ID']   = $vehicle['#']['model']['0']['@']['model_id'];
+        $arVehicles[$i]['MODEL']['NAME'] = $vehicle['#']['model']['0']['#'];
+        // год выпуска
+        $arVehicles[$i]['YEAR'] = $vehicle['#']['year']['0']['#'];
+        // пробег
+        $arVehicles[$i]['DISTANCE']      = $vehicle['#']['mileage']['0']['#']['value']['0']['#'];
+        $arVehicles[$i]['DISTANCE_UNIT'] = $vehicle['#']['mileage']['0']['#']['value']['0']['@']['unit'];
+        // цена
+        $arVehicles[$i]['PRICE']         = $vehicle['#']['price']['0']['#']['value']['0']['#'];
+        $arVehicles[$i]['PRICE_UNIT']    = $vehicle['#']['price']['0']['#']['value']['0']['@']['unit'];
+        $arVehicles[$i]['PRICE_RUB']     = $vehicle['#']['price']['0']['#']['value']['0']['@']['rub_price'];
+        // спец.цена и старая цена
+        // Остальное:
+        // объём двигателя
+        $arVehicles[$i]['ENGINE_VOLUME'] = $vehicle['#']['engine']['0']['#']['volume']['0']['#'];
+        $arVehicles[$i]['ENGINE_TYPE'] = $vehicle['#']['engine']['0']['#']['type']['0']['#'];
+        $arVehicles[$i]['ENGINE_POWER'] = $vehicle['#']['engine']['0']['#']['power']['0']['#'];
+        $arVehicles[$i]['GEARBOX'] = $vehicle['#']['gearbox']['0']['#']['type']['0']['#'];
+        $arVehicles[$i]['BODY_COLOR'] = $vehicle['#']['body']['0']['#']['color']['0']['#'];
+
+        $i++;
     }
-
-    // Марка и модель
-    $arVehicles[$i]['MARK']['ID']    = $vehicle['#']['mark']['0']['@']['mark_id'];
-    $arVehicles[$i]['MARK']['NAME']  = $vehicle['#']['mark']['0']['#'];
-    $arVehicles[$i]['MODEL']['ID']   = $vehicle['#']['model']['0']['@']['model_id'];
-    $arVehicles[$i]['MODEL']['NAME'] = $vehicle['#']['model']['0']['#'];
-    // год выпуска
-    $arVehicles[$i]['YEAR'] = $vehicle['#']['year']['0']['#'];
-    // пробег
-    $arVehicles[$i]['DISTANCE']      = $vehicle['#']['mileage']['0']['#']['value']['0']['#'];
-    $arVehicles[$i]['DISTANCE_UNIT'] = $vehicle['#']['mileage']['0']['#']['value']['0']['@']['unit'];
-    // цена
-    $arVehicles[$i]['PRICE']         = $vehicle['#']['price']['0']['#']['value']['0']['#'];
-    $arVehicles[$i]['PRICE_UNIT']    = $vehicle['#']['price']['0']['#']['value']['0']['@']['unit'];
-    $arVehicles[$i]['PRICE_RUB']     = $vehicle['#']['price']['0']['#']['value']['0']['@']['rub_price'];
-    // спец.цена и старая цена
-    // Остальное:
-    // объём двигателя
-    $arVehicles[$i]['ENGINE_VOLUME'] = $vehicle['#']['engine']['0']['#']['volume']['0']['#'];
-    $arVehicles[$i]['ENGINE_TYPE'] = $vehicle['#']['engine']['0']['#']['type']['0']['#'];
-    $arVehicles[$i]['ENGINE_POWER'] = $vehicle['#']['engine']['0']['#']['power']['0']['#'];
-    $arVehicles[$i]['GEARBOX'] = $vehicle['#']['gearbox']['0']['#']['type']['0']['#'];
-    $arVehicles[$i]['BODY_COLOR'] = $vehicle['#']['body']['0']['#']['color']['0']['#'];
-
-    $i++;
+    unset($xmlVehicles);
 }
 $arResult['VEHICLES'] = $arVehicles;
 
