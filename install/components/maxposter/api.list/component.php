@@ -242,7 +242,8 @@ if ($xmlVehicles && is_object($xmlVehicles)) { // Проверяем, что в�
         $arVehicles[$i]['PRICE']         = $vehicle['#']['price']['0']['#']['value']['0']['#'];
         $arVehicles[$i]['PRICE_UNIT']    = $vehicle['#']['price']['0']['#']['value']['0']['@']['unit'];
         $arVehicles[$i]['PRICE_RUB']     = $vehicle['#']['price']['0']['#']['value']['0']['@']['rub_price'];
-        // спец.цена и старая цена
+        // TODO: спец.цена и старая цена
+        $arVehicles[$i]['PRICE_SPECIAL'] = ('special' == $vehicle['#']['price']['0']['@']['status'] ? true : false);
         // Остальное:
         // объём двигателя
         $arVehicles[$i]['ENGINE_VOLUME'] = $vehicle['#']['engine']['0']['#']['volume']['0']['#'];
