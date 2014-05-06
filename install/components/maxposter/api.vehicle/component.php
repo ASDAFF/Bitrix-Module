@@ -215,63 +215,6 @@ CheckDirPath($localPath, true);
 CheckDirPath($path1, true);
 CheckDirPath($path2, true);
 CheckDirPath($path3, true);
-$photos = $xml->SelectNodes('/response/vehicle/photos');
-if ($photos) {
-    foreach ($photos->children() as $i => $photo) {
-        $fileName = $photo->getAttribute('file_name');
-        $path = sprintf('http://maxposter.ru/photo/%d/%d/orig/%s', $arResult['DEALER_ID'], $arResult['ID'], $fileName);
-        if (file_exists($localPath . $fileName)) {
-            $arResult['PHOTOS'][] = $fileName;
-            continue;
-        }
-        $from = fopen($path, 'rb', false);
-        $to   = fopen($localPath . $fileName, 'wb', false);
-        if (($bytes = stream_copy_to_stream($from, $to)) && ($bytes == @filesize($localPath . $fileName))) {
-            $arResult['PHOTOS'][] = $fileName;
-        }
-        if (@file_exists($localPath . $fileName) && (10 > @filesize($localPath . $fileName))) {
-            @unlink($localPath . $fileName);
-        } else {
-            @chmod($localPath . $fileName, 0666);
-            $fileName1 = $path1 . $fileName;
-            $fileName2 = $path2 . $fileName;
-            $fileName3 = $path3 . $fileName;
-            CFile::ResizeImageFile(
-                $localPath . $fileName,
-                $fileName1,
-                $arSize1,
-                BX_RESIZE_IMAGE_PROPORTIONAL,
-                array(),
-                80,
-                false
-            );
-            CFile::ResizeImageFile(
-                $localPath . $fileName,
-                $fileName2,
-                $arSize2,
-                BX_RESIZE_IMAGE_PROPORTIONAL,
-                array(),
-                80,
-                false
-            );
-            CFile::ResizeImageFile(
-                $localPath . $fileName,
-                $fileName3,
-                $arSize3,
-                BX_RESIZE_IMAGE_PROPORTIONAL,
-                array(),
-                80,
-                false
-            );
-            @chmod($path1 . $fileName, 0666);
-            @chmod($path2 . $fileName, 0666);
-            @chmod($path3 . $fileName, 0666);
-        }
-        fclose($from);fclose($to);
-    }
-}
-
-
 
 // Фото
 $arResult['PHOTOS'] = array();
@@ -311,6 +254,7 @@ if ($photos) {
             $arResult['ID'],
             $photoFileName
         );
+        $arResult['PHOTOS'][$i]['SRC'] = $sourcePhotoPath;
 
         foreach (array('original', 'big', 'medium', 'small') as $photoSize) {
             CheckDirPath(sprintf('%s/%s/', $basePhotoPath, $photoSize), true);
@@ -326,7 +270,7 @@ foreach ($arResult['PHOTOS'] as $c => $photoInfo) {
             @unlink($photoInfo[$photoSize]['0']);
         }
 
-        $from = fopen($sourcePhotoPath, 'rb', false);
+        $from = fopen($photoInfo['SRC'], 'rb', false);
         $to   = fopen($photoInfo['ORIG']['0'], 'wb', false);
         $bytes = stream_copy_to_stream($from, $to);
 
